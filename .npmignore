@@ -1,0 +1,28 @@
+# Source files
+src/
+tests/
+
+# Configuration files
+tsconfig.json
+vitest.config.ts
+eslint.config.js
+
+# Development files
+*.test.ts
+*.spec.ts
+
+# Build artifacts
+node_modules/
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

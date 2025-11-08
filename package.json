@@ -21,10 +21,24 @@
     "sort",
     "alphabetical"
   ],
-  "author": "",
+  "author": "Danton Mariano <dantonrmariano@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dantonmariano/prettier-plugin-sort-mui-sx-props.git"
+  },
+  "homepage": "https://github.com/dantonmariano/prettier-plugin-sort-mui-sx-props#readme",
+  "bugs": {
+    "url": "https://github.com/dantonmariano/prettier-plugin-sort-mui-sx-props/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
-    "prettier": ">=2.0.0"
+    "prettier": ">=3.0.0"
   },
   "devDependencies": {
     "@types/babel__core": "^7.20.5",

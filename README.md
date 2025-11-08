@@ -11,15 +11,31 @@ A Prettier plugin that automatically sorts Material-UI (MUI) `sx` prop propertie
 This plugin automatically organizes the properties inside MUI's `sx` prop in alphabetical order when you format your code with Prettier. It also recursively sorts nested objects like pseudo-selectors.
 
 **Before:**
+
 ```tsx
-<Box sx={{ padding: 2, marginTop: 1, backgroundColor: 'primary.main', display: 'flex' }}>
+<Box
+  sx={{
+    backgroundColor: "primary.main",
+    display: "flex",
+    marginTop: 1,
+    padding: 2,
+  }}
+>
   Content
 </Box>
 ```
 
 **After:**
+
 ```tsx
-<Box sx={{ backgroundColor: 'primary.main', display: 'flex', marginTop: 1, padding: 2 }}>
+<Box
+  sx={{
+    backgroundColor: "primary.main",
+    display: "flex",
+    marginTop: 1,
+    padding: 2,
+  }}
+>
   Content
 </Box>
 ```
@@ -41,6 +57,7 @@ npm run build
 3. Configure Prettier to use the plugin by adding it to your `.prettierrc`:
 
 **.prettierrc**
+
 ```json
 {
   "plugins": ["./dist/index.js"]
@@ -62,6 +79,7 @@ npx prettier --write "src/**/*.{js,jsx,ts,tsx}"
 ## How it works
 
 The plugin:
+
 1. Parses your JavaScript/TypeScript/JSX files using Babel's parser
 2. Identifies JSX attributes named `sx`
 3. Sorts the object properties alphabetically by their key names (including nested objects)
