@@ -56,7 +56,7 @@ function Component() {
     expect(result.trim()).toBe(expected.trim());
   });
 
-  it("should keep spread operators at the end", async () => {
+  it("should preserve spread operator positions", async () => {
     const input = `
 import { Box } from '@mui/material';
 
@@ -73,7 +73,7 @@ import { Box } from "@mui/material";
 const baseStyles = { color: "red" };
 
 function Component() {
-  return <Box sx={{ marginTop: 1, padding: 2, ...baseStyles }} />;
+  return <Box sx={{ ...baseStyles, marginTop: 1, padding: 2 }} />;
 }
 `;
 
@@ -81,7 +81,7 @@ function Component() {
     expect(result.trim()).toBe(expected.trim());
   });
 
-  it("should keep multiple spreads in order at the end", async () => {
+  it("should preserve multiple spreads in their original positions", async () => {
     const input = `
 import { Box } from '@mui/material';
 
@@ -100,7 +100,7 @@ const base = {};
 const override = {};
 
 function Component() {
-  return <Box sx={{ color: "red", padding: 2, ...base, ...override }} />;
+  return <Box sx={{ color: "red", ...base, padding: 2, ...override }} />;
 }
 `;
 
@@ -289,6 +289,84 @@ import { Box } from "@mui/material";
 
 function Component() {
   return <Box data-test={{ z: 1, a: 2 }} sx={{ color: "red", padding: 2 }} />;
+}
+`;
+
+    const result = await formatWithPlugin(input);
+    expect(result.trim()).toBe(expected.trim());
+  });
+
+  it("should support flexible spread positioning (base → props → override pattern)", async () => {
+    const input = `
+import { Box } from '@mui/material';
+
+const baseStyles = {};
+const overrides = {};
+
+function Component() {
+  return <Box sx={{ 
+    ...baseStyles, 
+    zIndex: 1, 
+    padding: 2, 
+    color: 'red', 
+    ...overrides 
+  }} />;
+}
+`;
+
+    const expected = `
+import { Box } from "@mui/material";
+
+const baseStyles = {};
+const overrides = {};
+
+function Component() {
+  return (
+    <Box
+      sx={{
+        ...baseStyles,
+        color: "red",
+        padding: 2,
+        zIndex: 1,
+        ...overrides,
+      }}
+    />
+  );
+}
+`;
+
+    const result = await formatWithPlugin(input);
+    expect(result.trim()).toBe(expected.trim());
+  });
+
+  it("should support spread-last pattern (props → parent override)", async () => {
+    const input = `
+import { Box } from '@mui/material';
+
+function Component(props) {
+  return <Box sx={{ 
+    zIndex: 1, 
+    color: 'red', 
+    padding: 2, 
+    ...props.sx 
+  }} />;
+}
+`;
+
+    const expected = `
+import { Box } from "@mui/material";
+
+function Component(props) {
+  return (
+    <Box
+      sx={{
+        color: "red",
+        padding: 2,
+        zIndex: 1,
+        ...props.sx,
+      }}
+    />
+  );
 }
 `;
 

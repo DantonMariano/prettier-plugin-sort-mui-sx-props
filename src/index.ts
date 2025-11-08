@@ -37,7 +37,7 @@ interface JSXExpressionContainer extends ASTNode {
 
 /**
  * Sorts object properties alphabetically and recursively sorts nested objects
- * Keeps spread elements, computed properties, and methods at the end
+ * Preserves the position of spread elements, computed properties, and methods
  */
 function sortObjectProperties(obj: ASTNode): ASTNode {
   if (!obj || typeof obj !== "object") {
@@ -47,55 +47,43 @@ function sortObjectProperties(obj: ASTNode): ASTNode {
   if (obj.type === "ObjectExpression") {
     const objectExpr = obj as ObjectExpression;
 
-    // Separate dynamic/special elements from regular properties
-    const dynamicElements: Property[] = [];
-    const regularProperties: Property[] = [];
+    // Build segments: groups of properties separated by dynamic elements
+    const segments: Array<Property | Property[]> = [];
+    let currentRegularProps: Property[] = [];
 
     objectExpr.properties.forEach((property) => {
-      // Keep these in original order at the end:
-      // - SpreadElement: ...spread
-      // - ObjectMethod: method() {}
-      // - Computed properties: [key]: value
-      if (
+      // Check if this is a dynamic element (spread, computed, method)
+      const isDynamic =
         property.type === "SpreadElement" ||
         property.type === "ObjectMethod" ||
         (property.key &&
           property.key.type !== "Identifier" &&
           property.key.type !== "StringLiteral" &&
-          property.key.type !== "Literal")
-      ) {
-        dynamicElements.push(property);
+          property.key.type !== "Literal");
+
+      if (isDynamic) {
+        // Before adding dynamic element, sort any accumulated regular properties
+        if (currentRegularProps.length > 0) {
+          const sorted = sortRegularProperties(currentRegularProps);
+          segments.push(sorted);
+          currentRegularProps = [];
+        }
+        // Add the dynamic element at its original position
+        segments.push(property);
       } else {
-        regularProperties.push(property);
+        // Accumulate regular properties
+        currentRegularProps.push(property);
       }
     });
 
-    // Sort regular properties alphabetically (case-insensitive)
-    const sortedRegularProperties = regularProperties
-      .sort((a, b) => {
-        const keyA = getPropertyKey(a).toLowerCase();
-        const keyB = getPropertyKey(b).toLowerCase();
+    // Don't forget to sort remaining regular properties
+    if (currentRegularProps.length > 0) {
+      const sorted = sortRegularProperties(currentRegularProps);
+      segments.push(sorted);
+    }
 
-        // If keys are equal after lowercasing, maintain original order (stable sort)
-        if (keyA === keyB) {
-          return 0;
-        }
-
-        return keyA.localeCompare(keyB);
-      })
-      .map((property) => {
-        // Recursively sort nested object expressions
-        if (property.value && property.value.type === "ObjectExpression") {
-          return {
-            ...property,
-            value: sortObjectProperties(property.value),
-          };
-        }
-        return property;
-      });
-
-    // Combine: sorted regular properties first, then dynamic elements at the end
-    const sortedProperties = [...sortedRegularProperties, ...dynamicElements];
+    // Flatten segments back into a single properties array
+    const sortedProperties = segments.flat();
 
     return {
       ...objectExpr,
@@ -104,6 +92,35 @@ function sortObjectProperties(obj: ASTNode): ASTNode {
   }
 
   return obj;
+}
+
+/**
+ * Sorts an array of regular properties alphabetically (case-insensitive)
+ * and recursively sorts nested objects
+ */
+function sortRegularProperties(properties: Property[]): Property[] {
+  return properties
+    .sort((a, b) => {
+      const keyA = getPropertyKey(a).toLowerCase();
+      const keyB = getPropertyKey(b).toLowerCase();
+
+      // If keys are equal after lowercasing, maintain original order (stable sort)
+      if (keyA === keyB) {
+        return 0;
+      }
+
+      return keyA.localeCompare(keyB);
+    })
+    .map((property) => {
+      // Recursively sort nested object expressions
+      if (property.value && property.value.type === "ObjectExpression") {
+        return {
+          ...property,
+          value: sortObjectProperties(property.value),
+        };
+      }
+      return property;
+    });
 }
 
 /**
