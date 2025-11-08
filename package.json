@@ -1,0 +1,43 @@
+{
+  "name": "prettier-plugin-sort-mui-sx-props",
+  "version": "1.0.0",
+  "description": "A Prettier plugin to sort MUI sx prop properties alphabetically",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "prettier",
+    "plugin",
+    "mui",
+    "material-ui",
+    "sx",
+    "sort",
+    "alphabetical"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "prettier": ">=2.0.0"
+  },
+  "devDependencies": {
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.23.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
