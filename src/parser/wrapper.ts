@@ -1,6 +1,6 @@
-import type { Parser, ParserOptions, ASTNode } from "../types.js";
 import * as prettierPluginBabel from "prettier/plugins/babel";
 import { sortSxProps } from "../ast/traverser.js";
+import type { ASTNode, Parser, ParserOptions } from "../types.js";
 
 /**
  * Custom parser that wraps Babel parser

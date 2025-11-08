@@ -1,5 +1,5 @@
-import prettier from "prettier";
 import path from "path";
+import prettier from "prettier";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);

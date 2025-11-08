@@ -15,10 +15,10 @@ This plugin automatically organizes the properties inside MUI's `sx` prop in alp
 ```tsx
 <Box
   sx={{
-    padding: 2,
-    display: "flex",
     backgroundColor: "primary.main",
+    display: "flex",
     marginTop: 1,
+    padding: 2,
   }}
 >
   Content

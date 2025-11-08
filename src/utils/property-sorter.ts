@@ -1,6 +1,6 @@
 import type { Property } from "../types.js";
-import { getPropertyKey } from "./property-key.js";
 import { sortObjectProperties } from "./object-sorter.js";
+import { getPropertyKey } from "./property-key.js";
 
 /**
  * Sorts an array of regular properties alphabetically (case-insensitive)
