@@ -15,10 +15,10 @@ This plugin automatically organizes the properties inside MUI's `sx` prop in alp
 ```tsx
 <Box
   sx={{
-    backgroundColor: "primary.main",
-    display: "flex",
-    marginTop: 1,
     padding: 2,
+    display: "flex",
+    backgroundColor: "primary.main",
+    marginTop: 1,
   }}
 >
   Content
@@ -42,25 +42,17 @@ This plugin automatically organizes the properties inside MUI's `sx` prop in alp
 
 ## Installation
 
-1. Install dependencies:
-
 ```bash
-npm install
+npm install prettier-plugin-sort-mui-sx-props --save-dev
 ```
 
-2. Build the plugin:
+## Configuration
 
-```bash
-npm run build
-```
-
-3. Configure Prettier to use the plugin by adding it to your `.prettierrc`:
-
-**.prettierrc**
+Add the plugin to your `.prettierrc`:
 
 ```json
 {
-  "plugins": ["./dist/index.js"]
+  "plugins": ["prettier-plugin-sort-mui-sx-props"]
 }
 ```
 
@@ -101,10 +93,23 @@ The plugin:
 
 ## Development
 
+### Setup
+
+```bash
+npm install
+npm run build
+```
+
 ### Build
 
 ```bash
 npm run build
+```
+
+### Testing
+
+```bash
+npm test
 ```
 
 ### Project Structure
@@ -112,20 +117,23 @@ npm run build
 ```
 prettier-sx-props/
 ├── src/
-│   └── index.ts       # Main plugin source (TypeScript)
-├── dist/              # Compiled output (generated)
-├── tsconfig.json      # TypeScript configuration
-├── package.json       # Project metadata
-└── example.tsx        # Example file for testing
-```
-
-### Testing
-
-Test the plugin on the example file:
-
-```bash
-npm run build
-npx prettier --write example.tsx
+│   ├── index.ts              # Main plugin entry
+│   ├── types.ts              # Type definitions
+│   ├── ast/
+│   │   └── traverser.ts      # AST traversal logic
+│   ├── parser/
+│   │   └── wrapper.ts        # Parser wrapper
+│   └── utils/
+│       ├── object-sorter.ts  # Object sorting logic
+│       ├── property-key.ts   # Property key utilities
+│       └── property-sorter.ts # Property sorting
+├── tests/
+│   ├── sorting.test.ts       # Test suite
+│   └── utils.ts              # Test utilities
+├── dist/                      # Compiled output (generated)
+├── tsconfig.json              # TypeScript configuration
+├── vitest.config.ts           # Test configuration
+└── package.json               # Project metadata
 ```
 
 ## License
