@@ -1,7 +1,7 @@
 # Prettier Plugin - Sort MUI SX Props
 
 [![CI](https://github.com/dantonmariano/prettier-plugin-sort-mui-sx-props/actions/workflows/ci.yml/badge.svg)](https://github.com/dantonmariano/prettier-plugin-sort-mui-sx-props/actions/workflows/ci.yml)
-[![npm version](https://badge.fury.io/js/prettier-plugin-sort-mui-sx-props.svg)](https://badge.fury.io/js/prettier-plugin-sort-mui-sx-props)
+[![npm version](https://img.shields.io/npm/v/prettier-plugin-sort-mui-sx-props.svg)](https://www.npmjs.com/package/prettier-plugin-sort-mui-sx-props)
 [![npm downloads](https://img.shields.io/npm/dm/prettier-plugin-sort-mui-sx-props.svg)](https://www.npmjs.com/package/prettier-plugin-sort-mui-sx-props)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
