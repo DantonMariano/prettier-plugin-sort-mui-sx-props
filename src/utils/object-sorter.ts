@@ -1,61 +1,71 @@
-import type { ASTNode, ObjectExpression, Property } from "../types.js";
+import type {
+  ObjectExpression,
+  ObjectMethod,
+  ObjectProperty,
+  SpreadElement,
+} from "@babel/types";
+
 import { sortRegularProperties } from "./property-sorter.js";
+
+type Property = ObjectMethod | ObjectProperty | SpreadElement;
+type Segment = Property | ObjectProperty[];
+
+/**
+ * Type guard to check if a property is a regular (sortable) property
+ */
+function isRegularProperty(property: Property): property is ObjectProperty {
+  if (property.type !== "ObjectProperty") {
+    return false;
+  }
+
+  // Check if it's computed or has a dynamic key
+  if (property.computed) {
+    return false;
+  }
+
+  const keyType = property.key.type;
+  return (
+    keyType === "Identifier" ||
+    keyType === "StringLiteral" ||
+    keyType === "NumericLiteral"
+  );
+}
 
 /**
  * Sorts object properties alphabetically and recursively sorts nested objects
  * Preserves the position of spread elements, computed properties, and methods
  */
-export function sortObjectProperties(obj: ASTNode): ASTNode {
-  if (!obj || typeof obj !== "object") {
-    return obj;
-  }
+export function sortObjectProperties(obj: ObjectExpression): ObjectExpression {
+  const segments: Segment[] = [];
+  let currentRegularProps: ObjectProperty[] = [];
 
-  if (obj.type === "ObjectExpression") {
-    const objectExpr = obj as ObjectExpression;
-
-    // Build segments: groups of properties separated by dynamic elements
-    const segments: Array<Property | Property[]> = [];
-    let currentRegularProps: Property[] = [];
-
-    objectExpr.properties.forEach((property) => {
-      // Check if this is a dynamic element (spread, computed, method)
-      const isDynamic =
-        property.type === "SpreadElement" ||
-        property.type === "ObjectMethod" ||
-        (property.key &&
-          property.key.type !== "Identifier" &&
-          property.key.type !== "StringLiteral" &&
-          property.key.type !== "Literal");
-
-      if (isDynamic) {
-        // Before adding dynamic element, sort any accumulated regular properties
-        if (currentRegularProps.length > 0) {
-          const sorted = sortRegularProperties(currentRegularProps);
-          segments.push(sorted);
-          currentRegularProps = [];
-        }
-        // Add the dynamic element at its original position
-        segments.push(property);
-      } else {
-        // Accumulate regular properties
-        currentRegularProps.push(property);
+  obj.properties.forEach((property) => {
+    if (isRegularProperty(property)) {
+      // Accumulate regular properties
+      currentRegularProps.push(property);
+    } else {
+      // Before adding dynamic element, sort any accumulated regular properties
+      if (currentRegularProps.length > 0) {
+        segments.push(sortRegularProperties(currentRegularProps));
+        currentRegularProps = [];
       }
-    });
-
-    // Don't forget to sort remaining regular properties
-    if (currentRegularProps.length > 0) {
-      const sorted = sortRegularProperties(currentRegularProps);
-      segments.push(sorted);
+      // Add the dynamic element at its original position
+      segments.push(property);
     }
+  });
 
-    // Flatten segments back into a single properties array
-    const sortedProperties = segments.flat();
-
-    return {
-      ...objectExpr,
-      properties: sortedProperties,
-    };
+  // Don't forget to sort remaining regular properties
+  if (currentRegularProps.length > 0) {
+    segments.push(sortRegularProperties(currentRegularProps));
   }
 
-  return obj;
+  // Flatten segments back into a single properties array
+  const sortedProperties = segments.flatMap((segment) =>
+    Array.isArray(segment) ? segment : [segment],
+  );
+
+  return {
+    ...obj,
+    properties: sortedProperties,
+  };
 }

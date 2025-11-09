@@ -1,9 +1,9 @@
-import type { Property } from "../types.js";
+import type { ObjectProperty } from "@babel/types";
 
 /**
  * Extracts the key name from a property node
  */
-export function getPropertyKey(property: Property): string {
+export function getPropertyKey(property: ObjectProperty): string {
   if (!property.key) return "";
 
   if (property.key.type === "Identifier") {
@@ -14,7 +14,7 @@ export function getPropertyKey(property: Property): string {
     return String(property.key.value || "");
   }
 
-  if (property.key.type === "Literal") {
+  if (property.key.type === "NumericLiteral") {
     return String(property.key.value || "");
   }
 

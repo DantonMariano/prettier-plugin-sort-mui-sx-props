@@ -10,7 +10,9 @@
     "prepare": "husky",
     "test": "vitest run",
     "test:watch": "vitest",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [
     "prettier",
@@ -42,8 +44,12 @@
   },
   "devDependencies": {
     "@types/babel__core": "^7.20.5",
+    "@types/babel__traverse": "^7.28.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "eslint": "^9.39.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "prettier": "^3.0.0",
@@ -58,7 +64,11 @@
     "dist"
   ],
   "lint-staged": {
-    "*.{ts,js,json,md}": [
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
       "prettier --write"
     ]
   }
